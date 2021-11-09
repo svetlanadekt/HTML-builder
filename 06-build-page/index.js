@@ -1,4 +1,5 @@
 const fs = require('fs');
+const fsp = require('fs/promises');
 const path = require('path');
 const styleFile = path.join(__dirname, 'project-dist', 'style.css');
 const assets = path.join(__dirname, 'project-dist', 'assets');
@@ -11,14 +12,19 @@ const template = path.join(__dirname, 'template.html');
 const componentsFolder = path.join(__dirname, 'components');
 const resultHtml = path.join(__dirname, 'project-dist', 'index.html');
 
- function builder() {
- // fs.rm(path.join(__dirname, 'project-dist'), { recursive: true, force: true }, () => {});
+const dest = path.join(__dirname, 'project-dist');
+
+
+
+async function builder() {
+  await fsp.rm(dest, { recursive: true, force: true }, () => {});
+
   //созд папку project-dist
-   fs.mkdir(path.join(__dirname, 'project-dist'), err => {
+  fs.mkdir(path.join(__dirname, 'project-dist'), err => {
     if(err) throw err;   
   });
  
-   fs.readFile(template, 'utf-8', (err, item) => {
+  fs.readFile(template, 'utf-8', (err, item) => {
     if(err) throw err; 
     // console.log(item);
     fs.readdir(componentsFolder, (err, data) => { 
@@ -40,7 +46,7 @@ const resultHtml = path.join(__dirname, 'project-dist', 'index.html');
  
 
   //создаем файл со стилями
-   fs.readdir(path.join(__dirname,'styles'), {withFileTypes: true}, (err, data) => { 
+  fs.readdir(path.join(__dirname,'styles'), {withFileTypes: true}, (err, data) => { 
     for (let i = 0; i < data.length; i++) {
       if(data[i].isFile() && (path.parse(data[i].name).ext) == '.css') {
         const readStream = fs.ReadStream(path.join(styleFolder, data[i].name));
@@ -56,20 +62,20 @@ const resultHtml = path.join(__dirname, 'project-dist', 'index.html');
   });
     
   // create assets folder
-   fs.mkdir(assets, (err) => {
+  fs.mkdir(assets, (err) => {
     if (err) throw err;
   });
-   fs.mkdir(fonts, (err) => {
+  fs.mkdir(fonts, (err) => {
     if(err) throw err;
   });
-   fs.mkdir(img, (err) => {
+  fs.mkdir(img, (err) => {
     if(err) throw err;
   });
-   fs.mkdir(svg, (err) => {
+  fs.mkdir(svg, (err) => {
     if(err) throw err;
   });
   
-   fs.readdir(assetsFolder, (err, data) => { 
+  fs.readdir(assetsFolder, (err, data) => { 
     for (let i = 0; i < data.length; i++) {
       fs.readdir(path.join(assetsFolder, data[i]), (err, el) => {
         for (let j = 0; j < el.length; j++) {
